@@ -30,4 +30,12 @@ const renameKey = (data, keyToChange, newKey) => {
   return reformatedData;
 };
 
-module.exports = { createRef, changeTimestamp, renameKey };
+const changeValues = (data, refObj, valueToChange) => {
+  const finalData = data.map(obj => {
+    obj[valueToChange] = refObj[obj[valueToChange]];
+    return obj;
+  });
+  return finalData;
+};
+
+module.exports = { createRef, changeTimestamp, renameKey, changeValues };

@@ -5,7 +5,12 @@ const {
   usersData
 } = require('../data/index');
 
-const { changeTimestamp, createRef, renameKey } = require('../../utils/utils');
+const {
+  changeTimestamp,
+  createRef,
+  renameKey,
+  changeValues
+} = require('../../utils/utils');
 
 exports.seed = (knex, Promise) => {
   return knex.migrate
@@ -14,7 +19,7 @@ exports.seed = (knex, Promise) => {
     .then(() => {
       return knex.insert(topicsData).into('topics');
     })
-    .then(topics => {
+    .then(() => {
       return knex.insert(usersData).into('users');
     })
     .then(users => {
@@ -27,18 +32,15 @@ exports.seed = (knex, Promise) => {
     .then(articles => {
       changeTimestamp(commentData);
       const ref = createRef(articles, 'title', 'article_id');
-      const changedCommentsKey = renameKey(
+      const changedTitleKey = renameKey(
         commentData,
         'belongs_to',
         'article_id'
       );
-      const finalData = data.map(obj => {
-        obj.article_id = ref[obj.article_id];
-        return treasure;
-      });
-      console.log(changedCommentsKey);
+      const finalData = changeValues(changedTitleKey, ref, 'article_id');
+      const changedCreated_byKey = renameKey(finalData, 'created_by', 'author');
       return knex
-        .insert(finalData)
+        .insert(changedCreated_byKey)
         .into('comment')
         .returning('*');
     });
