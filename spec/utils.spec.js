@@ -165,7 +165,7 @@ describe('createRef', () => {
   });
 });
 
-describe.only('renameKey', () => {
+describe('renameKey', () => {
   it('returns an empty array if passed an empty array', () => {
     expect(renameKey([])).to.eql([]);
   });
