@@ -12,7 +12,7 @@ const {
 } = require('../utils/utils.js');
 const { expect } = require('chai');
 
-describe('changeTimestamp', () => {
+describe.only('changeTimestamp', () => {
   it('returns a empty array when given an empty array', () => {
     expect(changeTimestamp([])).to.eql([]);
   });
@@ -23,7 +23,7 @@ describe('changeTimestamp', () => {
       }
     ];
 
-    let output = new Date(1471522072389).toUTCString();
+    let output = '2016-08-18 12:07:52';
 
     expect(changeTimestamp(input)).to.eql([{ created_at: output }]);
   });
@@ -42,16 +42,15 @@ describe('changeTimestamp', () => {
 
     let output = [
       {
-        created_at: new Date(1471522072389).toUTCString()
+        created_at: '2016-08-18 12:07:52'
       },
       {
-        created_at: new Date(1500584273256).toUTCString()
+        created_at: '2017-07-20 20:57:53'
       },
       {
-        created_at: new Date(1500659650346).toUTCString()
+        created_at: '2017-07-21 17:54:10'
       }
     ];
-
     expect(changeTimestamp(input)).to.eql(output);
   });
   it('returns the correct timestamp when given an array of a several objects containing a timestamp', () => {
@@ -91,7 +90,7 @@ describe('changeTimestamp', () => {
         author: 'jessjelly',
         body:
           'Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.',
-        created_at: new Date(1500584273256).toUTCString()
+        created_at: '2017-07-20 20:57:53'
       },
       {
         title: '22 Amazing open source React projects',
@@ -99,7 +98,7 @@ describe('changeTimestamp', () => {
         author: 'happyamy2016',
         body:
           'This is a collection of open source apps built with React.JS library. In this observation, we compared nearly 800 projects to pick the top 22. (React Native: 11, React: 11). To evaluate the quality, Mybridge AI considered a variety of factors to determine how useful the projects are for programmers. To give you an idea on the quality, the average number of Github stars from the 22 projects was 1,681.',
-        created_at: new Date(1500659650346).toUTCString()
+        created_at: '2017-07-21 17:54:10'
       },
       {
         title: 'Making sense of Redux',
@@ -107,7 +106,7 @@ describe('changeTimestamp', () => {
         author: 'jessjelly',
         body:
           'When I first started learning React, I remember reading lots of articles about the different technologies associated with it. In particular, this one article stood out. It mentions how confusing the ecosystem is, and how developers often feel they have to know ALL of the ecosystem before using React. And as someone who’s used React daily for the past 8 months or so, I can definitely say that I’m still barely scratching the surface in terms of understanding how the entire ecosystem works! But my time spent using React has given me some insight into when and why it might be appropriate to use another technology — Redux (a variant of the Flux architecture).',
-        created_at: new Date(1514093931240).toUTCString()
+        created_at: '2017-12-24 05:38:51'
       }
     ];
 

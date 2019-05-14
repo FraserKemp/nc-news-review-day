@@ -5,7 +5,9 @@ exports.up = function(knex, Promise) {
     commentTable.string('author').references('users.username');
     commentTable.integer('article_id').references('articles.article_id');
     commentTable.integer('votes').defaultTo(0);
-    commentTable.string('created_at').defaultTo(new Date());
+    commentTable
+      .datetime('created_at', { precision: 6 })
+      .defaultTo(knex.fn.now(6));
     commentTable.text('body').notNullable();
   });
 };
