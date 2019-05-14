@@ -12,7 +12,7 @@ const {
 } = require('../utils/utils.js');
 const { expect } = require('chai');
 
-describe.only('changeTimestamp', () => {
+describe('changeTimestamp', () => {
   it('returns a empty array when given an empty array', () => {
     expect(changeTimestamp([])).to.eql([]);
   });

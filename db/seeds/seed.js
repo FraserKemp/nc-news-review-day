@@ -41,7 +41,7 @@ exports.seed = (knex, Promise) => {
       const changedCreated_byKey = renameKey(finalData, 'created_by', 'author'); // changing the key 'created_by' to author
       return knex
         .insert(changedCreated_byKey)
-        .into('comment')
+        .into('comments')
         .returning('*');
     });
 };

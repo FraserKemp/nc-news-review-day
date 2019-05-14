@@ -35,8 +35,9 @@ const renameKey = (data, keyToChange, newKey) => {
 
 const changeValues = (data, refObj, valueToChange) => {
   const finalData = data.map(obj => {
-    obj[valueToChange] = refObj[obj[valueToChange]];
-    return obj;
+    const finalObj = obj;
+    finalObj[valueToChange] = refObj[obj[valueToChange]];
+    return finalObj;
   });
   return finalData;
 };

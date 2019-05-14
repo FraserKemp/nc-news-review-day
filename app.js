@@ -10,6 +10,10 @@ app.use('/api', apiRouter);
 
 app.all('/*', routeNotFound);
 
+app.use((err, req, res, next) => {
+  res.status(500).send({ msg: 'PlaceHolder error' });
+});
+
 app.use(handle500);
 
 module.exports = app;
