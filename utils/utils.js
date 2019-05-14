@@ -3,7 +3,7 @@ const changeTimestamp = arr => {
   const changedTimes = arr.map(item => {
     const changedObj = item;
     const timestamp = item.created_at;
-    changedObj.created_at = new Date(timestamp);
+    changedObj.created_at = new Date(timestamp).toUTCString();
     return changedObj;
   });
   return changedTimes;

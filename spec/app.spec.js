@@ -7,7 +7,7 @@ const app = require('../app');
 const connection = require('../db/connection');
 
 describe.only('/', () => {
-  beforeEach(() => connection.seed.run());
+  // beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
   describe('/api', () => {
