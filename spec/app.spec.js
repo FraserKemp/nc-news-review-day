@@ -10,7 +10,7 @@ const request = require('supertest');
 const app = require('../app');
 const connection = require('../db/connection');
 
-describe.only('/', () => {
+describe('/', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -36,80 +36,101 @@ describe.only('/', () => {
     });
   });
 
-  describe('/apis/articles', () => {
-    it('GET status:200 - returns all the articles', () => {
-      return request(app)
-        .get('/api/articles')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles[0]).to.contain.keys(
-            'article_id',
-            'title',
-            'votes',
-            'topic',
-            'author',
-            'created_at',
-            'count'
-          );
-        });
+  describe.only('/articles', () => {
+    describe('/apis/articles', () => {
+      it('GET status:200 - returns all the articles', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'votes',
+              'topic',
+              'author',
+              'created_at',
+              'comment_count'
+            );
+          });
+      });
     });
-  });
 
-  describe('/api/articles?sort_by=article_id', () => {
-    it('GET status:200 - returns all the articles sorted by the given query', () => {
-      return request(app)
-        .get('/api/articles?sort_by=article_id')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.descendingBy('article_id');
-        });
+    describe('/api/articles?sort_by=article_id', () => {
+      it('GET status:200 - returns all the articles sorted by the given query', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.descendingBy('article_id');
+          });
+      });
     });
-  });
 
-  describe('/api/articles?order=desc', () => {
-    it('GET status:200 - returns all the articles sorted by their default value in desc order', () => {
-      return request(app)
-        .get('/api/articles?order=desc')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.descendingBy('created_at');
-        });
+    describe('/api/articles?order=desc', () => {
+      it('GET status:200 - returns all the articles sorted by their default value in desc order', () => {
+        return request(app)
+          .get('/api/articles?order=desc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.descendingBy('created_at');
+          });
+      });
     });
-  });
 
-  describe('/api/articles?sort_by=article_id&order=asc', () => {
-    it('GET status:200 - returns all the articles sorted by their article_id in acending order', () => {
-      return request(app)
-        .get('/api/articles?sort_by=article_id&order=asc')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.be.ascendingBy('article_id');
-        });
+    describe('/api/articles?sort_by=article_id&order=asc', () => {
+      it('GET status:200 - returns all the articles sorted by their article_id in acending order', () => {
+        return request(app)
+          .get('/api/articles?sort_by=article_id&order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.be.ascendingBy('article_id');
+          });
+      });
     });
-  });
 
-  describe('/api/articles?author=butter_bridge', () => {
-    it('GET status:200 - returns all the articles that belong to the author given in the query', () => {
-      return request(app)
-        .get('/api/articles?author=butter_bridge')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.have.lengthOf(3);
-        });
+    describe('/api/articles?author=butter_bridge', () => {
+      it('GET status:200 - returns all the articles that belong to the author given in the query', () => {
+        return request(app)
+          .get('/api/articles?author=butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.have.lengthOf(3);
+          });
+      });
     });
-  });
 
-  describe('/api/articles?topic=mitch', () => {
-    it('GET status:200 - returns all the topics that belong to that topic given in the query', () => {
-      return request(app)
-        .get('/api/articles?topic=mitch')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).to.have.lengthOf(11);
-          expect(body.articles[0].topic).to.eql('mitch');
-          expect(body.articles[4].topic).to.eql('mitch');
-          expect(body.articles[8].topic).to.eql('mitch');
-        });
+    describe('/api/articles?topic=mitch', () => {
+      it('GET status:200 - returns all the topics that belong to that topic given in the query', () => {
+        return request(app)
+          .get('/api/articles?topic=mitch')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.have.lengthOf(11);
+            expect(body.articles[0].topic).to.eql('mitch');
+            expect(body.articles[4].topic).to.eql('mitch');
+            expect(body.articles[8].topic).to.eql('mitch');
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id', () => {
+      it('GET status:200 - returns the articles that match the given article_id in the query, 1 in this case', () => {
+        return request(app)
+          .get('/api/articles/1')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article[0]).to.eql({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              body: 'I find this existence challenging',
+              votes: 100,
+              topic: 'mitch',
+              author: 'butter_bridge',
+              created_at: '2018-11-15T12:21:54.000Z'
+            });
+          });
+      });
     });
   });
 });

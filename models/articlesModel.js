@@ -15,7 +15,7 @@ const fetchAllArticles = ({
       'articles.author',
       'articles.created_at'
     )
-    .count('comments.article_id as count')
+    .count('comments.article_id as comment_count')
     .from('articles')
     .modify(query => {
       if (author) query.where('articles.author', author);
@@ -25,9 +25,18 @@ const fetchAllArticles = ({
     .groupBy('articles.article_id')
     .orderBy(sort_by, order)
     .then(articles => {
-      console.log(articles);
       return articles;
     });
 };
 
-module.exports = { fetchAllArticles };
+const fetchArticleById = article_id => {
+  return connection
+    .select('*')
+    .from('articles')
+    .where({ article_id })
+    .then(articles => {
+      return articles;
+    });
+};
+
+module.exports = { fetchAllArticles, fetchArticleById };
