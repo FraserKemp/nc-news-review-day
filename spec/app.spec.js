@@ -211,7 +211,7 @@ describe('/', () => {
     });
   });
 
-  describe.only('/comments', () => {
+  describe('/comments', () => {
     describe('/api/comments/:comment_id', () => {
       it('PATCH status:200 - returns the comment that has been patched', () => {
         return request(app)
@@ -235,4 +235,23 @@ describe('/', () => {
       });
     });
   });
+
+  describe.only('/users', () => {
+    describe('/api/users/:username', () => {
+      it('GET status:200 - returns a user object containing all the data from the given user', () => {
+        return request(app)
+          .get('/api/users/butter_bridge')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.user[0]).to.contain.keys(
+              'username',
+              'avatar_url',
+              'name'
+            );
+          });
+      });
+    });
+  });
 });
+
+//git commit -m 'created users router, controller and model '
