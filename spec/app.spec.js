@@ -350,7 +350,10 @@ describe('/', () => {
       it('/api/articles/99999', () => {
         return request(app)
           .get('/api/articles/99999')
-          .expect('');
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
       });
     });
   });

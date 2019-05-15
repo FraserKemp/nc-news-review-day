@@ -20,9 +20,7 @@ const getArticleById = (req, res, next) => {
     .then(article => {
       res.status(200).send({ article });
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(next);
 };
 
 const patchArticleById = (req, res, next) => {

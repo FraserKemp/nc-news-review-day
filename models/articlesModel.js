@@ -34,8 +34,10 @@ const fetchArticleById = article_id => {
     .select('*')
     .from('articles')
     .where({ article_id })
-    .then(articles => {
-      return articles;
+    .first()
+    .then(article => {
+      if (!article) return Promise.reject({ code: 400 });
+      else return article;
     });
 };
 
