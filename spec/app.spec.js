@@ -32,6 +32,7 @@ describe('/', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.topics[0]).to.contain.keys('slug', 'description');
+          expect(body.topics).to.have.lengthOf(3);
         });
     });
   });
@@ -44,6 +45,15 @@ describe('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'votes',
+              'topic',
+              'author',
+              'created_at',
+              'comment_count'
+            );
+            expect(body.articles[1]).to.contain.keys(
               'article_id',
               'title',
               'votes',
@@ -236,7 +246,7 @@ describe('/', () => {
     });
   });
 
-  describe.only('/users', () => {
+  describe('/users', () => {
     describe('/api/users/:username', () => {
       it('GET status:200 - returns a user object containing all the data from the given user', () => {
         return request(app)
@@ -252,6 +262,96 @@ describe('/', () => {
       });
     });
   });
-});
 
-//git commit -m 'created users router, controller and model '
+  describe.only('Error handeling', () => {
+    describe('/not_a_route', () => {
+      it('Route Not Found status:404 - returns a message of route not found when an incorrect route is given', () => {
+        return request(app)
+          .get('/not_a_route')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Route Not Found');
+          });
+      });
+    });
+
+    describe('making a request method that isnt allowed', () => {
+      describe('topicsRouter', () => {
+        it('returns 405 when passed a method that isnt set up on the route "/api/topics"', () => {
+          return request(app)
+            .put('/api/topics')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+      });
+      describe('articlesRouter', () => {
+        it('returns 405 when passed a method that isnt set up on the route "/api/articles"', () => {
+          return request(app)
+            .put('/api/articles')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+        it('returns 405 when passed a method that isnt set up on the route "/api/articles/:article_id"', () => {
+          return request(app)
+            .put('/api/articles/4')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+        it('returns 405 when passed a method that isnt set up on the route "/api/articles/:article_id/comments"', () => {
+          return request(app)
+            .put('/api/articles/4/comments')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+      });
+      describe('commentsRouter', () => {
+        it('returns 405 when passed a method that isnt set up on the route "/api/comments/:comment_id"', () => {
+          return request(app)
+            .put('/api/comments/1')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+      });
+
+      describe('usersRouter', () => {
+        it('returns 405 when passed a method that isnt set up on the route "/api/users/:username"', () => {
+          return request(app)
+            .put('/api/users/mitch')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
+      });
+    });
+
+    describe('Sorting a table by a key that doesnt exist', () => {
+      it('returns Column does not exist when passed an invalid column', () => {
+        return request(app)
+          .get('/api/articles?sort_by=christymastime')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Column does not exist');
+          });
+      });
+    });
+
+    describe('Passsed an incorrect id to GET the data from', () => {
+      it('/api/articles/99999', () => {
+        return request(app)
+          .get('/api/articles/99999')
+          .expect('');
+      });
+    });
+  });
+});

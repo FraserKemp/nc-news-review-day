@@ -11,9 +11,7 @@ const getAllArticles = (req, res, next) => {
     .then(articles => {
       res.status(200).send({ articles });
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(next);
 };
 
 const getArticleById = (req, res, next) => {
@@ -22,7 +20,9 @@ const getArticleById = (req, res, next) => {
     .then(article => {
       res.status(200).send({ article });
     })
-    .catch(next);
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 const patchArticleById = (req, res, next) => {

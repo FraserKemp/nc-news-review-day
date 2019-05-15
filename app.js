@@ -1,6 +1,11 @@
 const express = require('express');
 const apiRouter = require('./routes/api');
-const { routeNotFound, handle500 } = require('./errors');
+const {
+  routeNotFound,
+  handle500,
+  methodNotAllowed,
+  columnDoesNotExist
+} = require('./errors');
 
 const app = express();
 
@@ -10,9 +15,7 @@ app.use('/api', apiRouter);
 
 app.all('/*', routeNotFound);
 
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: 'PlaceHolder error' });
-});
+app.use(columnDoesNotExist);
 
 app.use(handle500);
 
