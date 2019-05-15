@@ -39,4 +39,38 @@ const fetchArticleById = article_id => {
     });
 };
 
-module.exports = { fetchAllArticles, fetchArticleById };
+const updateArticleById = (article_id, inc_votes) => {
+  return connection
+    .into('articles')
+    .where({ article_id })
+    .increment('votes', inc_votes)
+    .returning('*');
+};
+
+const fetchCommentsByArticleId = (
+  article_id,
+  sort_by = 'created_at',
+  order = 'desc'
+) => {
+  return connection
+    .select('*')
+    .from('comments')
+    .where({ article_id })
+    .orderBy(sort_by, order)
+    .returning('*');
+};
+
+const addNewComment = newComment => {
+  return connection
+    .into('comments')
+    .insert(newComment)
+    .returning('*');
+};
+
+module.exports = {
+  fetchAllArticles,
+  fetchArticleById,
+  updateArticleById,
+  fetchCommentsByArticleId,
+  addNewComment
+};

@@ -36,7 +36,7 @@ describe('/', () => {
     });
   });
 
-  describe.only('/articles', () => {
+  describe('/articles', () => {
     describe('/apis/articles', () => {
       it('GET status:200 - returns all the articles', () => {
         return request(app)
@@ -129,6 +129,108 @@ describe('/', () => {
               author: 'butter_bridge',
               created_at: '2018-11-15T12:21:54.000Z'
             });
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id', () => {
+      it('PATCH status:200 - returns the article that has been patched', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({
+            inc_votes: 1
+          })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article[0]).to.eql({
+              article_id: 1,
+              title: 'Living in the shadow of a great man',
+              body: 'I find this existence challenging',
+              votes: 101,
+              topic: 'mitch',
+              author: 'butter_bridge',
+              created_at: '2018-11-15T12:21:54.000Z'
+            });
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments', () => {
+      it('GET status:200 - returns all the comments that belong to a given article_id', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.have.lengthOf(13);
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments?sort_by=comment_id', () => {
+      it('GET status:200 - returns all the comments sorted by the given query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?sort_by=comment_id')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.descendingBy('comment_id');
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments?order=asc', () => {
+      it('GET status:200 - returns all the comments ordered by the given query', () => {
+        return request(app)
+          .get('/api/articles/1/comments?order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.ascendingBy('created_at');
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments', () => {
+      it('POST status:201 - returns the comment that has been inserted', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({
+            username: 'butter_bridge',
+            body: 'this is the best comment out there'
+          })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment[0]).to.contain.keys(
+              'article_id',
+              'author',
+              'body',
+              'comment_id',
+              'created_at',
+              'votes'
+            );
+          });
+      });
+    });
+  });
+
+  describe.only('/comments', () => {
+    describe('/api/comments/:comment_id', () => {
+      it('PATCH status:200 - returns the comment that has been patched', () => {
+        return request(app)
+          .patch('/api/comments/1')
+          .send({ inc_votes: -1 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comment[0].votes).to.eql(15);
+          });
+      });
+    });
+
+    describe('/api/comments/:comment_id', () => {
+      it('DELETE status:200 - returns the comment that has been patched', () => {
+        return request(app)
+          .delete('/api/comments/1')
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).to.eql({});
           });
       });
     });
