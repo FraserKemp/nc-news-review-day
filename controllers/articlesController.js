@@ -24,14 +24,6 @@ const getAllArticles = (req, res, next) => {
         else res.status(200).send({ articles });
       })
       .catch(next);
-  // fetchAllArticles(req.query)
-  //   .then(articles => {
-  //     console.log(articles);
-  //     if (articles.length === 0)
-  //       return Promise.reject({ code: 404, msg: 'author does not exist' });
-  //     res.status(200).send({ articles });
-  //   })
-  //   .catch(next);
 };
 
 const getArticleById = (req, res, next) => {

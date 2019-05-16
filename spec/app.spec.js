@@ -355,7 +355,7 @@ describe.only('/', () => {
       });
 
       describe('GET all articles by a author that doesnt exist', () => {
-        it('returns status 400 - GET - author does not exist when passed an invalid author', () => {
+        it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
           return request(app)
             .get('/api/articles?author=NotAnAuthor')
             .expect(404)
@@ -372,6 +372,17 @@ describe.only('/', () => {
             .expect(200)
             .then(({ body }) => {
               expect(body.articles).to.eql([]);
+            });
+        });
+      });
+
+      describe('GET all articles by a topic that doesnt exist', () => {
+        it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
+          return request(app)
+            .get('/api/articles?topic=NotATopc')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Topic does not exist');
             });
         });
       });
