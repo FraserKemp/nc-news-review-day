@@ -368,7 +368,7 @@ describe.only('/', () => {
       });
     });
 
-    describe('passed an incorrect article_id to GET a certain comment from that given id', () => {
+    describe('Passed an incorrect article_id to GET a certain comment from that given id', () => {
       it('return status:404 - GET - when an in correct article_id is passed', () => {
         return request(app)
           .get('/api/articles/9999/comments')
@@ -379,7 +379,7 @@ describe.only('/', () => {
       });
     });
 
-    describe('passed an incorrect article_id to POST a new comment', () => {
+    describe('Passed an incorrect article_id to POST a new comment', () => {
       it('returns status:404 - POST - when an incorrect article_id is passed', () => {
         return request(app)
           .post('/api/articles/9999/comments')
@@ -391,7 +391,7 @@ describe.only('/', () => {
       });
     });
 
-    describe('passed a correct article_id but passed a comment with an incorrect format to POST to an article', () => {
+    describe('Passed a correct article_id but passed a comment with an incorrect format to POST to an article', () => {
       it('returns status:400 - POST - when passed a correct article_id but an incorrect comment format', () => {
         return request(app)
           .post('/api/articles/1/comments')
@@ -401,10 +401,6 @@ describe.only('/', () => {
             expect(body.msg).to.eql('Incorrect comment format');
           });
       });
-    });
-
-    describe('', () => {
-      it('', () => {});
     });
   });
 });
