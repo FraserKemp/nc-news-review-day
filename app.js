@@ -1,12 +1,6 @@
 const express = require('express');
 const apiRouter = require('./routes/api');
-const {
-  routeNotFound,
-  handle500,
-  methodNotAllowed,
-  handle400,
-  handle404
-} = require('./errors');
+const { routeNotFound, handle500, handle400, handle404 } = require('./errors');
 
 const app = express();
 
