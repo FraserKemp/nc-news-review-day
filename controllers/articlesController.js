@@ -19,9 +19,8 @@ const getAllArticles = (req, res, next) => {
   } else
     Promise.all([fetchAllArticles(req.query), fetchUserByUsername(author)])
       .then(([articles, author]) => {
-        console.log(author);
         if (!author)
-          return Promise.reject({ code: 404, msg: 'Author not found' });
+          return Promise.reject({ code: 404, msg: 'Author does not exist' });
         else res.status(200).send({ articles });
       })
       .catch(next);

@@ -360,7 +360,7 @@ describe.only('/', () => {
             .get('/api/articles?author=NotAnAuthor')
             .expect(404)
             .then(({ body }) => {
-              expect(body.msg).to.eql('Author not found');
+              expect(body.msg).to.eql('Author does not exist');
             });
         });
       });

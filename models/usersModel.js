@@ -9,9 +9,6 @@ const fetchUserByUsername = username => {
     .where('users.username', '=', username)
     .first()
     .then(user => {
-      // if (!user)
-      //   return Promise.reject({ code: 404, msg: 'Username does not exist' });
-      // else
       return user;
     });
 };
