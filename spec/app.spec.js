@@ -396,9 +396,9 @@ describe.only('/', () => {
         return request(app)
           .post('/api/articles/1/comments')
           .send({ username: 'butter_bridge', body: null })
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
+            expect(body.msg).to.eql('Incorrect comment format');
           });
       });
     });

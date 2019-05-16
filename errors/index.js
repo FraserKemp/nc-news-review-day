@@ -7,7 +7,7 @@ exports.methodNotAllowed = (req, res, next) => {
 };
 
 exports.handle400 = (err, req, res, next) => {
-  const codes = {};
+  const codes = { '23502': 'Incorrect comment format' };
   if (codes[err.code]) {
     res.status(400).send({ msg: codes[err.code] });
   } else next(err);
