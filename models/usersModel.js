@@ -6,7 +6,10 @@ const fetchUserByUsername = username => {
     .from('users')
     .where('users.username', '=', username)
     .first()
-    .returning('*');
+    .then(user => {
+      if (!user)
+        return Promise.reject({ code: 400, msg: 'Username does not exist' });
+    });
 };
 
 module.exports = { fetchUserByUsername };

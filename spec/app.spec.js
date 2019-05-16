@@ -512,7 +512,7 @@ describe.only('/', () => {
       });
     });
 
-    describe.only('/comments', () => {
+    describe('/comments', () => {
       describe('PATCH - Passed an incorrect comment_id', () => {
         it('returns status:404 - PATCH - when passed an incorrect comment_id', () => {
           return request(app)
@@ -577,6 +577,19 @@ describe.only('/', () => {
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).to.eql('Invalid input syntax for interger');
+            });
+        });
+      });
+    });
+
+    describe.only('/users', () => {
+      describe('GET - passed an incorrect username', () => {
+        it('returns status 400 - GET - when passed an incorrect username', () => {
+          return request(app)
+            .get('/api/users/billybobbyboo')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Username does not exist');
             });
         });
       });
