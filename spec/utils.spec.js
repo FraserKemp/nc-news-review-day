@@ -8,7 +8,8 @@ const {
   createRef,
   changeTimestamp,
   renameKey,
-  changeValues
+  changeValues,
+  checkIfExists
 } = require('../utils/utils.js');
 const { expect } = require('chai');
 

@@ -6,10 +6,22 @@ exports.methodNotAllowed = (req, res, next) => {
   res.status(405).send({ msg: 'Method Not Allowed' });
 };
 
-exports.handle400 = (err, req, res, next) => {
-  const codes = { '23502': 'Incorrect comment format', 400: 'Bad request!' };
+exports.sqlErrors = (err, req, res, next) => {
+  const codes = {
+    '22P02': 'Invalid input syntax for interger'
+  };
   if (codes[err.code]) {
     res.status(400).send({ msg: codes[err.code] });
+  } else next(err);
+};
+
+exports.handle400 = (err, req, res, next) => {
+  const codes = {
+    '23502': 'Incorrect comment format',
+    400: 'Bad request!'
+  };
+  if (codes[err.code]) {
+    res.status(400).send({ msg: err.msg || codes[err.code] });
   } else next(err);
 };
 
@@ -20,7 +32,7 @@ exports.handle404 = (err, req, res, next) => {
     42703: 'Column does not exist'
   };
   if (codes[err.code]) {
-    res.status(404).send({ msg: codes[err.code] });
+    res.status(404).send({ msg: err.msg || codes[err.code] });
   } else next(err);
 };
 

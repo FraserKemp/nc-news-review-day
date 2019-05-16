@@ -6,9 +6,13 @@ const {
   addNewComment
 } = require('../models/articlesModel');
 
+const { fetchUserByUsername } = require('../models/usersModel');
+
 const getAllArticles = (req, res, next) => {
   fetchAllArticles(req.query)
     .then(articles => {
+      if (articles.length === 0)
+        return Promise.reject({ code: 404, msg: 'author does not exist' });
       res.status(200).send({ articles });
     })
     .catch(next);

@@ -253,11 +253,7 @@ describe.only('/', () => {
           .get('/api/users/butter_bridge')
           .expect(200)
           .then(({ body }) => {
-            expect(body.user[0]).to.contain.keys(
-              'username',
-              'avatar_url',
-              'name'
-            );
+            expect(body.user).to.contain.keys('username', 'avatar_url', 'name');
           });
       });
     });
@@ -358,13 +354,43 @@ describe.only('/', () => {
         });
       });
 
-      describe('Passsed an incorrect article_id to GET the data from', () => {
+      describe('GET all articles by a author that doesnt exist', () => {
+        it('returns status 400 - GET - author does not exist when passed an invalid author', () => {
+          return request(app)
+            .get('/api/articles?author=NotAnAuthor')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('author does not exist');
+            });
+        });
+      });
+
+      describe('GET all articles by a author that does exist but has no articles', () => {
+        it('returns status 200 - GET - returns an empty array as the author has no articles', () => {
+          return request(app)
+            .get('/api/articles?author=lurker')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.articles).to.eql([]);
+            });
+        });
+      });
+
+      describe.only('Passsed an incorrect article_id to GET the data from', () => {
         it('returns status:404 - GET - when an incorrect article_id is passed', () => {
           return request(app)
             .get('/api/articles/99999')
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+        it('returns status:404 - GET - when an bad article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/dog')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Invalid input syntax for interger');
             });
         });
       });

@@ -1,3 +1,5 @@
+const { fetchUserByUsername } = require('../models/usersModel');
+
 const changeTimestamp = arr => {
   if (arr.length === 0) return [];
   const changedTimes = arr.map(item => {
@@ -42,4 +44,9 @@ const changeValues = (data, refObj, valueToChange) => {
   return finalData;
 };
 
-module.exports = { createRef, changeTimestamp, renameKey, changeValues };
+module.exports = {
+  createRef,
+  changeTimestamp,
+  renameKey,
+  changeValues
+};

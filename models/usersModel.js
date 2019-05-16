@@ -5,6 +5,7 @@ const fetchUserByUsername = username => {
     .select('*')
     .from('users')
     .where('users.username', '=', username)
+    .first()
     .returning('*');
 };
 
