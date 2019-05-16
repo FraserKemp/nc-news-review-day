@@ -442,7 +442,7 @@ describe.only('/', () => {
         });
       });
 
-      describe('Passed an incorrect article_id to GET a certain comment from that given id', () => {
+      describe('GET - Passed an incorrect article_id to get a certain comment from that given id', () => {
         it('return status:404 - GET - when an in correct article_id is passed', () => {
           return request(app)
             .get('/api/articles/9999/comments')
@@ -453,7 +453,18 @@ describe.only('/', () => {
         });
       });
 
-      describe('Passed an incorrect article_id to POST a new comment', () => {
+      describe('GET - Passed an invalid article_id to get a certain comment from that given id', () => {
+        it('return status:400 - GET - when an invalid article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/cat/comments')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Invalid input syntax for interger');
+            });
+        });
+      });
+
+      describe('POST - Passed an incorrect article_id to post a new comment', () => {
         it('returns status:404 - POST - when an incorrect article_id is passed', () => {
           return request(app)
             .post('/api/articles/9999/comments')
@@ -461,6 +472,18 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe.only('POST - Passed an invalid article_id to post a new comment', () => {
+        it('returns status:404 - POST - when an incorrect article_id is passed', () => {
+          return request(app)
+            .post('/api/articles/cat/comments')
+            .send({ username: 'butter_bridge', body: 'wowza' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Invalid input syntax for interger');
             });
         });
       });
@@ -476,7 +499,19 @@ describe.only('/', () => {
             });
         });
       });
+
+      describe('POST - Passed a correct article_id but passed no comment to add', () => {
+        it('returns status:400 - when passed a correct article_id but no comment', () => {
+          return request(app)
+            .post('/api/articles/1/comments')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect comment format');
+            });
+        });
+      });
     });
+
     describe('/comments', () => {
       describe('PATCH - Passed an incorrect comment_id', () => {
         it('returns status:404 - when passed an incorrect comment_id', () => {

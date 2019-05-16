@@ -67,16 +67,19 @@ const fetchCommentsByArticleId = (
   sort_by = 'created_at',
   order = 'desc'
 ) => {
-  return connection
-    .select('*')
-    .from('comments')
-    .where({ article_id })
-    .orderBy(sort_by, order)
-    .returning('*')
-    .then(comment => {
-      if (comment.length === 0) return Promise.reject({ code: 404 });
-      else return comment;
-    });
+  if (!article_id)
+    return Promise.reject({ code: 400, msg: 'article_id must be a number' });
+  else
+    return connection
+      .select('*')
+      .from('comments')
+      .where({ article_id })
+      .orderBy(sort_by, order)
+      .returning('*')
+      .then(comment => {
+        if (comment.length === 0) return Promise.reject({ code: 404 });
+        else return comment;
+      });
 };
 
 const addNewComment = newComment => {
