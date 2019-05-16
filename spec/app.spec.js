@@ -348,10 +348,13 @@ describe.only('/', () => {
       });
 
       describe('Ordering a table by something other than asc/desc ', () => {
-        it('returns status:200 - GET - invalid order query as it will be defualted to desc', () => {
+        it('returns status:400 - GET - invalid order query', () => {
           return request(app)
             .get('/api/articles?order=jingleBells')
-            .expect(200);
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Bad request!');
+            });
         });
       });
 
