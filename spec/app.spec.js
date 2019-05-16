@@ -402,5 +402,16 @@ describe.only('/', () => {
           });
       });
     });
+
+    describe('Passed an incorrect comment_id to PATCH', () => {
+      it('/api/comments/:comment_id', () => {
+        return request(app)
+          .patch('/api/comments/9999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
+      });
+    });
   });
 });
