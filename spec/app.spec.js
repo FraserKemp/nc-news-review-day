@@ -525,6 +525,17 @@ describe.only('/', () => {
         });
       });
 
+      describe('PATCH - Passed an incorrect comment_id and nothing to patch', () => {
+        it('returns status:400 - PATCH - when passed an incorrect comment_id and nothing to patch', () => {
+          return request(app)
+            .patch('/api/comments/9999')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Nothing sent to PATCH');
+            });
+        });
+      });
+
       describe('PATCH - Passed an invalid comment_id', () => {
         it('returns status:404 - PATCH - when passed an incorrect comment_id', () => {
           return request(app)
