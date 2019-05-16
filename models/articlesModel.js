@@ -28,7 +28,7 @@ const fetchAllArticles = ({
       .groupBy('articles.article_id')
       .orderBy(sort_by, order)
       .then(articles => {
-        return articles;
+        if (articles) return articles;
       });
 };
 

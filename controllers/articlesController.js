@@ -9,13 +9,30 @@ const {
 const { fetchUserByUsername } = require('../models/usersModel');
 
 const getAllArticles = (req, res, next) => {
-  fetchAllArticles(req.query)
-    .then(articles => {
-      if (articles.length === 0)
-        return Promise.reject({ code: 404, msg: 'author does not exist' });
-      res.status(200).send({ articles });
-    })
-    .catch(next);
+  const { author } = req.query;
+  if (!author) {
+    fetchAllArticles(req.query)
+      .then(articles => {
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  } else
+    Promise.all([fetchAllArticles(req.query), fetchUserByUsername(author)])
+      .then(([articles, author]) => {
+        console.log(author);
+        if (!author)
+          return Promise.reject({ code: 404, msg: 'Author not found' });
+        else res.status(200).send({ articles });
+      })
+      .catch(next);
+  // fetchAllArticles(req.query)
+  //   .then(articles => {
+  //     console.log(articles);
+  //     if (articles.length === 0)
+  //       return Promise.reject({ code: 404, msg: 'author does not exist' });
+  //     res.status(200).send({ articles });
+  //   })
+  //   .catch(next);
 };
 
 const getArticleById = (req, res, next) => {

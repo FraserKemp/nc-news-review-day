@@ -360,7 +360,7 @@ describe.only('/', () => {
             .get('/api/articles?author=NotAnAuthor')
             .expect(404)
             .then(({ body }) => {
-              expect(body.msg).to.eql('author does not exist');
+              expect(body.msg).to.eql('Author not found');
             });
         });
       });
@@ -582,12 +582,12 @@ describe.only('/', () => {
       });
     });
 
-    describe.only('/users', () => {
+    describe('/users', () => {
       describe('GET - passed an incorrect username', () => {
-        it('returns status 400 - GET - when passed an incorrect username', () => {
+        it('returns status 404 - GET - when passed an incorrect username', () => {
           return request(app)
             .get('/api/users/billybobbyboo')
-            .expect(400)
+            .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Username does not exist');
             });
