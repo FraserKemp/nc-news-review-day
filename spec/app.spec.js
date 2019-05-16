@@ -335,82 +335,96 @@ describe.only('/', () => {
       });
     });
 
-    describe('Sorting a table by a key that doesnt exist', () => {
-      it('returns status 404 - GET - Column does not exist when passed an invalid column', () => {
-        return request(app)
-          .get('/api/articles?sort_by=christymastime')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Column does not exist');
-          });
+    describe('/articles', () => {
+      describe('Sorting a table by a key that doesnt exist', () => {
+        it('returns status 404 - GET - Column does not exist when passed an invalid column', () => {
+          return request(app)
+            .get('/api/articles?sort_by=christymastime')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Column does not exist');
+            });
+        });
+      });
+
+      describe('Passsed an incorrect article_id to GET the data from', () => {
+        it('returns status:404 - GET - when an incorrect article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/99999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('Passsed an incorrect article_id to PATCH the data from', () => {
+        it('returns status:404 - PATCH - when an incorrect article_id is passed', () => {
+          return request(app)
+            .patch('/api/articles/9999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('Passed an incorrect article_id to GET a certain comment from that given id', () => {
+        it('return status:404 - GET - when an in correct article_id is passed', () => {
+          return request(app)
+            .get('/api/articles/9999/comments')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('Passed an incorrect article_id to POST a new comment', () => {
+        it('returns status:404 - POST - when an incorrect article_id is passed', () => {
+          return request(app)
+            .post('/api/articles/9999/comments')
+            .send({ username: 'butter_bridge', body: 'wowza' })
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('POST - Passed a correct article_id but passed a comment with an incorrect format', () => {
+        it('returns status:400 - when passed a correct article_id but an incorrect comment format', () => {
+          return request(app)
+            .post('/api/articles/1/comments')
+            .send({ username: 'butter_bridge', body: null })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect comment format');
+            });
+        });
       });
     });
-
-    describe('Passsed an incorrect article_id to GET the data from', () => {
-      it('returns status:404 - GET - when an incorrect article_id is passed', () => {
-        return request(app)
-          .get('/api/articles/99999')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
-          });
+    describe('/comments', () => {
+      describe('PATCH - Passed an incorrect comment_id', () => {
+        it('returns status:404 - when passed an incorrect comment_id', () => {
+          return request(app)
+            .patch('/api/comments/9999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
       });
-    });
 
-    describe('Passsed an incorrect article_id to PATCH the data from', () => {
-      it('returns status:404 - PATCH - when an incorrect article_id is passed', () => {
-        return request(app)
-          .patch('/api/articles/9999')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
-          });
-      });
-    });
-
-    describe('Passed an incorrect article_id to GET a certain comment from that given id', () => {
-      it('return status:404 - GET - when an in correct article_id is passed', () => {
-        return request(app)
-          .get('/api/articles/9999/comments')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
-          });
-      });
-    });
-
-    describe('Passed an incorrect article_id to POST a new comment', () => {
-      it('returns status:404 - POST - when an incorrect article_id is passed', () => {
-        return request(app)
-          .post('/api/articles/9999/comments')
-          .send({ username: 'butter_bridge', body: 'wowza' })
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
-          });
-      });
-    });
-
-    describe('Passed a correct article_id but passed a comment with an incorrect format to POST to an article', () => {
-      it('returns status:400 - POST - when passed a correct article_id but an incorrect comment format', () => {
-        return request(app)
-          .post('/api/articles/1/comments')
-          .send({ username: 'butter_bridge', body: null })
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Incorrect comment format');
-          });
-      });
-    });
-
-    describe('Passed an incorrect comment_id to PATCH', () => {
-      it('/api/comments/:comment_id', () => {
-        return request(app)
-          .patch('/api/comments/9999')
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).to.eql('Id does not exist');
-          });
+      describe('DELETE - Passed an incorrect comment_id', () => {
+        it('returns status:404 - when passed an incorrect comment_id', () => {
+          return request(app)
+            .delete('/api/comments/9999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Id does not exist');
+            });
+        });
       });
     });
   });

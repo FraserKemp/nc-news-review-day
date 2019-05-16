@@ -17,7 +17,11 @@ const removeCommentById = comment_id => {
     .select('comments')
     .from('comments')
     .where({ comment_id })
-    .del();
+    .del()
+    .then(comment => {
+      if (comment === 0) return Promise.reject({ code: 400 });
+      else return comment;
+    });
 };
 
 module.exports = { updateCommentById, removeCommentById };
