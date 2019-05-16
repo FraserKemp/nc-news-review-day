@@ -537,7 +537,7 @@ describe.only('/', () => {
       });
 
       describe('PATCH - Passed an invalid comment_id', () => {
-        it('returns status:404 - PATCH - when passed an incorrect comment_id', () => {
+        it('returns status:400 - PATCH - when passed an incorrect comment_id', () => {
           return request(app)
             .patch('/api/comments/cat')
             .send({ inc_votes: 1 })
@@ -566,6 +566,17 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('DELETE - Passed an invalid comment_id', () => {
+        it('returns status:400 - DELETE - when passed an invalid comment_id', () => {
+          return request(app)
+            .delete('/api/comments/cat')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Invalid input syntax for interger');
             });
         });
       });
