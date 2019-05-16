@@ -275,9 +275,9 @@ describe.only('/', () => {
       });
     });
 
-    describe('making a request method that isnt allowed', () => {
+    describe('Sending a request method that isnt allowed to a router', () => {
       describe('topicsRouter', () => {
-        it('returns 405 when passed a method that isnt set up on the route "/api/topics"', () => {
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/topics"', () => {
           return request(app)
             .put('/api/topics')
             .expect(405)
@@ -287,7 +287,7 @@ describe.only('/', () => {
         });
       });
       describe('articlesRouter', () => {
-        it('returns 405 when passed a method that isnt set up on the route "/api/articles"', () => {
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/articles"', () => {
           return request(app)
             .put('/api/articles')
             .expect(405)
@@ -295,7 +295,7 @@ describe.only('/', () => {
               expect(body.msg).to.eql('Method Not Allowed');
             });
         });
-        it('returns 405 when passed a method that isnt set up on the route "/api/articles/:article_id"', () => {
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/articles/:article_id"', () => {
           return request(app)
             .put('/api/articles/4')
             .expect(405)
@@ -303,7 +303,7 @@ describe.only('/', () => {
               expect(body.msg).to.eql('Method Not Allowed');
             });
         });
-        it('returns 405 when passed a method that isnt set up on the route "/api/articles/:article_id/comments"', () => {
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/articles/:article_id/comments"', () => {
           return request(app)
             .put('/api/articles/4/comments')
             .expect(405)
@@ -313,7 +313,7 @@ describe.only('/', () => {
         });
       });
       describe('commentsRouter', () => {
-        it('returns 405 when passed a method that isnt set up on the route "/api/comments/:comment_id"', () => {
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/comments/:comment_id"', () => {
           return request(app)
             .put('/api/comments/1')
             .expect(405)
@@ -324,7 +324,7 @@ describe.only('/', () => {
       });
 
       describe('usersRouter', () => {
-        it('returns 405 when passed a method that isnt set up on the route "/api/users/:username"', () => {
+        it('returns status - 405 when passed a method that isnt set up on the route "/api/users/:username"', () => {
           return request(app)
             .put('/api/users/mitch')
             .expect(405)
@@ -336,7 +336,7 @@ describe.only('/', () => {
     });
 
     describe('Sorting a table by a key that doesnt exist', () => {
-      it('returns Column does not exist when passed an invalid column', () => {
+      it('returns status 404 - GET - Column does not exist when passed an invalid column', () => {
         return request(app)
           .get('/api/articles?sort_by=christymastime')
           .expect(404)
@@ -347,7 +347,7 @@ describe.only('/', () => {
     });
 
     describe('Passsed an incorrect article_id to GET the data from', () => {
-      it('/api/articles/99999', () => {
+      it('returns status:404 - GET - when an incorrect article_id is passed', () => {
         return request(app)
           .get('/api/articles/99999')
           .expect(404)
@@ -358,7 +358,7 @@ describe.only('/', () => {
     });
 
     describe('Passsed an incorrect article_id to PATCH the data from', () => {
-      it('/api/articles/99999', () => {
+      it('returns status:404 - PATCH - when an incorrect article_id is passed', () => {
         return request(app)
           .patch('/api/articles/9999')
           .expect(404)
@@ -369,7 +369,7 @@ describe.only('/', () => {
     });
 
     describe('passed an incorrect article_id to GET a certain comment from that given id', () => {
-      it('/api/articles/:article_id/comments', () => {
+      it('return status:404 - GET - when an in correct article_id is passed', () => {
         return request(app)
           .get('/api/articles/9999/comments')
           .expect(404)
@@ -380,7 +380,7 @@ describe.only('/', () => {
     });
 
     describe('passed an incorrect article_id to POST a new comment', () => {
-      it('/api/articles/:article_id/comment', () => {
+      it('returns status:404 - POST - when an incorrect article_id is passed', () => {
         return request(app)
           .post('/api/articles/9999/comments')
           .send({ username: 'butter_bridge', body: 'wowza' })
@@ -392,7 +392,7 @@ describe.only('/', () => {
     });
 
     describe('passed a correct article_id but passed a comment with an incorrect format to POST to an article', () => {
-      it('/api/articles/:article_id/comment', () => {
+      it('returns status:400 - POST - when passed a correct article_id but an incorrect comment format', () => {
         return request(app)
           .post('/api/articles/1/comments')
           .send({ username: 'butter_bridge', body: null })
@@ -401,6 +401,10 @@ describe.only('/', () => {
             expect(body.msg).to.eql('Incorrect comment format');
           });
       });
+    });
+
+    describe('', () => {
+      it('', () => {});
     });
   });
 });
