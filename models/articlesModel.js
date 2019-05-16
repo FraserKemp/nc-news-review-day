@@ -46,7 +46,11 @@ const updateArticleById = (article_id, inc_votes) => {
     .into('articles')
     .where({ article_id })
     .increment('votes', inc_votes)
-    .returning('*');
+    .returning('*')
+    .then(article => {
+      if (article.length === 0) return Promise.reject({ code: 400 });
+      else return article;
+    });
 };
 
 const fetchCommentsByArticleId = (
@@ -59,7 +63,11 @@ const fetchCommentsByArticleId = (
     .from('comments')
     .where({ article_id })
     .orderBy(sort_by, order)
-    .returning('*');
+    .returning('*')
+    .then(comment => {
+      if (comment.length === 0) return Promise.reject({ code: 400 });
+      else return comment;
+    });
 };
 
 const addNewComment = newComment => {
@@ -68,7 +76,6 @@ const addNewComment = newComment => {
     .insert(newComment)
     .returning('*');
 };
-
 module.exports = {
   fetchAllArticles,
   fetchArticleById,

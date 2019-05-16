@@ -4,8 +4,8 @@ const {
   routeNotFound,
   handle500,
   methodNotAllowed,
-  columnDoesNotExist,
-  idDoesNotExist
+  handle400,
+  handle404
 } = require('./errors');
 
 const app = express();
@@ -16,9 +16,9 @@ app.use('/api', apiRouter);
 
 app.all('/*', routeNotFound);
 
-app.use(columnDoesNotExist);
+app.use(handle400);
 
-app.use(idDoesNotExist);
+app.use(handle404);
 
 app.use(handle500);
 

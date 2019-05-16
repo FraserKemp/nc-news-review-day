@@ -10,7 +10,7 @@ const request = require('supertest');
 const app = require('../app');
 const connection = require('../db/connection');
 
-describe('/', () => {
+describe.only('/', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -130,15 +130,15 @@ describe('/', () => {
           .get('/api/articles/1')
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0]).to.eql({
-              article_id: 1,
-              title: 'Living in the shadow of a great man',
-              body: 'I find this existence challenging',
-              votes: 100,
-              topic: 'mitch',
-              author: 'butter_bridge',
-              created_at: '2018-11-15T12:21:54.000Z'
-            });
+            expect(body.article).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'votes',
+              'topic',
+              'author',
+              'created_at'
+            );
           });
       });
     });
@@ -152,15 +152,15 @@ describe('/', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0]).to.eql({
-              article_id: 1,
-              title: 'Living in the shadow of a great man',
-              body: 'I find this existence challenging',
-              votes: 101,
-              topic: 'mitch',
-              author: 'butter_bridge',
-              created_at: '2018-11-15T12:21:54.000Z'
-            });
+            expect(body.article[0]).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'votes',
+              'topic',
+              'author',
+              'created_at'
+            );
           });
       });
     });
@@ -263,7 +263,7 @@ describe('/', () => {
     });
   });
 
-  describe.only('Error handeling', () => {
+  describe('Error handeling', () => {
     describe('/not_a_route', () => {
       it('Route Not Found status:404 - returns a message of route not found when an incorrect route is given', () => {
         return request(app)
@@ -339,18 +339,52 @@ describe('/', () => {
       it('returns Column does not exist when passed an invalid column', () => {
         return request(app)
           .get('/api/articles?sort_by=christymastime')
-          .expect(404)
+          .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.eql('Column does not exist');
           });
       });
     });
 
-    describe('Passsed an incorrect id to GET the data from', () => {
+    describe('Passsed an incorrect article_id to GET the data from', () => {
       it('/api/articles/99999', () => {
         return request(app)
           .get('/api/articles/99999')
           .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
+      });
+    });
+
+    describe('Passsed an incorrect article_id to PATCH the data from', () => {
+      it('/api/articles/99999', () => {
+        return request(app)
+          .patch('/api/articles/9999')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
+      });
+    });
+
+    describe('passed an incorrect article_id to GET a certain comment from that given id', () => {
+      it('/api/articles/:article_id/comments', () => {
+        return request(app)
+          .get('/api/articles/9999/comments')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
+      });
+    });
+
+    describe('passed an incorrect article_id to POST a new comment', () => {
+      it('/api/articles/:article_id/comment', () => {
+        return request(app)
+          .post('/api/articles/9999/comments')
+          .send({ username: 'butter_bridge', body: 'wowza' })
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.eql('Id does not exist');
           });

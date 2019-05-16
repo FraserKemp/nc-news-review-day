@@ -6,17 +6,17 @@ exports.methodNotAllowed = (req, res, next) => {
   res.status(405).send({ msg: 'Method Not Allowed' });
 };
 
-exports.columnDoesNotExist = (err, req, res, next) => {
-  const codes = { 42703: 'Column does not exist' };
+exports.handle400 = (err, req, res, next) => {
+  const codes = { 400: 'Id does not exist', 42703: 'Column does not exist' };
   if (codes[err.code]) {
-    res.status(404).send({ msg: codes[err.code] });
+    res.status(400).send({ msg: codes[err.code] });
   } else next(err);
 };
 
-exports.idDoesNotExist = (err, req, res, next) => {
-  const codes = { 400: 'Id does not exist' };
+exports.handle404 = (err, req, res, next) => {
+  const codes = { '23503': 'Id does not exist' };
   if (codes[err.code]) {
-    res.status(400).send({ msg: codes[err.code] });
+    res.status(404).send({ msg: codes[err.code] });
   } else next(err);
 };
 
