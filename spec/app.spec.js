@@ -390,5 +390,17 @@ describe.only('/', () => {
           });
       });
     });
+
+    describe('passed a correct article_id but passed a comment with an incorrect format to POST to an article', () => {
+      it('/api/articles/:article_id/comment', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'butter_bridge', body: null })
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.eql('Id does not exist');
+          });
+      });
+    });
   });
 });
