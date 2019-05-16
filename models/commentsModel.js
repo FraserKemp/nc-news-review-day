@@ -1,6 +1,8 @@
 const connection = require('../db/connection');
 
 const updateCommentById = (comment_id, inc_votes) => {
+  if (!inc_votes)
+    return Promise.reject({ code: 400, msg: 'Nothing sent to PATCH' });
   return connection
     .into('comments')
     .where({ comment_id })
