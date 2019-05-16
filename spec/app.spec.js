@@ -347,6 +347,14 @@ describe.only('/', () => {
         });
       });
 
+      describe('Ordering a table by something other than asc/desc ', () => {
+        it('returns status:200 - GET - invalid order query as it will be defualted to desc', () => {
+          return request(app)
+            .get('/api/articles?order=jingleBells')
+            .expect(200);
+        });
+      });
+
       describe('Passsed an incorrect article_id to GET the data from', () => {
         it('returns status:404 - GET - when an incorrect article_id is passed', () => {
           return request(app)

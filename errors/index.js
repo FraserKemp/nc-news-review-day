@@ -16,7 +16,7 @@ exports.handle400 = (err, req, res, next) => {
 exports.handle404 = (err, req, res, next) => {
   const codes = {
     '23503': 'Id does not exist',
-    400: 'Id does not exist',
+    404: 'Id does not exist',
     42703: 'Column does not exist'
   };
   if (codes[err.code]) {

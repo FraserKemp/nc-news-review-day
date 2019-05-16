@@ -7,7 +7,7 @@ const updateCommentById = (comment_id, inc_votes) => {
     .increment('votes', inc_votes)
     .returning('*')
     .then(comment => {
-      if (comment.length === 0) return Promise.reject({ code: 400 });
+      if (comment.length === 0) return Promise.reject({ code: 404 });
       else return comment;
     });
 };
@@ -19,7 +19,7 @@ const removeCommentById = comment_id => {
     .where({ comment_id })
     .del()
     .then(comment => {
-      if (comment === 0) return Promise.reject({ code: 400 });
+      if (comment === 0) return Promise.reject({ code: 404 });
       else return comment;
     });
 };

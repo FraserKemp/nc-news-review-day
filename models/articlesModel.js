@@ -1,11 +1,8 @@
 const connection = require('../db/connection');
 
-const fetchAllArticles = ({
-  sort_by = 'created_at',
-  order = 'desc',
-  author,
-  topic
-}) => {
+const fetchAllArticles = ({ sort_by = 'created_at', order, author, topic }) => {
+  if (order !== 'asc') order = 'desc';
+  console.log(order);
   return connection
     .select(
       'articles.article_id',
@@ -36,7 +33,7 @@ const fetchArticleById = article_id => {
     .where({ article_id })
     .first()
     .then(article => {
-      if (!article) return Promise.reject({ code: 400 });
+      if (!article) return Promise.reject({ code: 404 });
       else return article;
     });
 };
@@ -48,7 +45,7 @@ const updateArticleById = (article_id, inc_votes) => {
     .increment('votes', inc_votes)
     .returning('*')
     .then(article => {
-      if (article.length === 0) return Promise.reject({ code: 400 });
+      if (article.length === 0) return Promise.reject({ code: 404 });
       else return article;
     });
 };
@@ -65,7 +62,7 @@ const fetchCommentsByArticleId = (
     .orderBy(sort_by, order)
     .returning('*')
     .then(comment => {
-      if (comment.length === 0) return Promise.reject({ code: 400 });
+      if (comment.length === 0) return Promise.reject({ code: 404 });
       else return comment;
     });
 };
