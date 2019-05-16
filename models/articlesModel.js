@@ -45,15 +45,21 @@ const fetchArticleById = article_id => {
 };
 
 const updateArticleById = (article_id, inc_votes) => {
-  return connection
-    .into('articles')
-    .where({ article_id })
-    .increment('votes', inc_votes)
-    .returning('*')
-    .then(article => {
-      if (article.length === 0) return Promise.reject({ code: 404 });
-      else return article;
+  if (!inc_votes || typeof inc_votes !== 'number')
+    return Promise.reject({
+      code: 400,
+      msg: 'Bad Request! Body is not a number'
     });
+  else
+    return connection
+      .into('articles')
+      .where({ article_id })
+      .increment('votes', inc_votes)
+      .returning('*')
+      .then(article => {
+        if (article.length === 0) return Promise.reject({ code: 404 });
+        else return article;
+      });
 };
 
 const fetchCommentsByArticleId = (

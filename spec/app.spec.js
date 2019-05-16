@@ -376,7 +376,7 @@ describe.only('/', () => {
         });
       });
 
-      describe.only('Passsed an incorrect article_id to GET the data from', () => {
+      describe('GET - Passsed an incorrect article_id to get the data from', () => {
         it('returns status:404 - GET - when an incorrect article_id is passed', () => {
           return request(app)
             .get('/api/articles/99999')
@@ -395,13 +395,49 @@ describe.only('/', () => {
         });
       });
 
-      describe('Passsed an incorrect article_id to PATCH the data from', () => {
+      describe(' PATCH - Passsed an incorrect article_id to patch the data from', () => {
         it('returns status:404 - PATCH - when an incorrect article_id is passed', () => {
           return request(app)
             .patch('/api/articles/9999')
+            .send({ inc_votes: 5 })
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Id does not exist');
+            });
+        });
+      });
+
+      describe('PATCH - Passsed an nothing to patch', () => {
+        it('returns status:404 - PATCH - when an correct article_id is passed with nothing to patch', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Bad Request! Body is not a number');
+            });
+        });
+      });
+
+      describe('PATCH - Passsed and an invalid body to patch', () => {
+        it('returns status:400 - PATCH - when an correct article_id is passed', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 'cat' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Bad Request! Body is not a number');
+            });
+        });
+      });
+
+      describe('PATCH - Passsed and a valid body to patch along with another key', () => {
+        it('returns status:400 - PATCH - when another key is on the body', () => {
+          return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 'cat', mitch: 'hello' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Bad Request! Body is not a number');
             });
         });
       });
