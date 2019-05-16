@@ -339,7 +339,7 @@ describe.only('/', () => {
       it('returns Column does not exist when passed an invalid column', () => {
         return request(app)
           .get('/api/articles?sort_by=christymastime')
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.eql('Column does not exist');
           });
@@ -350,7 +350,7 @@ describe.only('/', () => {
       it('/api/articles/99999', () => {
         return request(app)
           .get('/api/articles/99999')
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.eql('Id does not exist');
           });
@@ -361,7 +361,7 @@ describe.only('/', () => {
       it('/api/articles/99999', () => {
         return request(app)
           .patch('/api/articles/9999')
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.eql('Id does not exist');
           });
@@ -372,7 +372,7 @@ describe.only('/', () => {
       it('/api/articles/:article_id/comments', () => {
         return request(app)
           .get('/api/articles/9999/comments')
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.eql('Id does not exist');
           });
