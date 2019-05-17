@@ -10,10 +10,11 @@ const getAllTopics = (req, res, next) => {
 
 const getTopicByName = (req, res, next) => {
   const { theTopic } = req.params;
-  fetchTopicByName(theTopic).then(topic => {
-    console.log(topic);
-    res.status(200).send({ topic });
-  });
+  fetchTopicByName(theTopic)
+    .then(topic => {
+      res.status(200).send({ topic });
+    })
+    .catch(next);
 };
 
 module.exports = { getAllTopics, getTopicByName };

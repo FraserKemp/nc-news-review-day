@@ -16,7 +16,9 @@ const fetchTopicByName = theTopic => {
     .where('slug', theTopic)
     .first()
     .then(topic => {
-      return topic;
+      if (!topic)
+        return Promise.reject({ code: 404, msg: 'Topic does not exist' });
+      else return topic;
     });
 };
 

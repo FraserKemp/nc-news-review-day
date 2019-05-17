@@ -8,23 +8,54 @@ const {
 
 const { fetchUserByUsername } = require('../models/usersModel');
 
+const { fetchTopicByName } = require('../models/topicsModels');
+
 const getAllArticles = (req, res, next) => {
   const { author } = req.query;
-  if (!author) {
+  const { topic } = req.query;
+
+  if (!author && !topic) {
     fetchAllArticles(req.query)
+      .then(articles => {
+        console.log('hello');
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  } else {
+    Promise.all([
+      topic ? fetchTopicByName(topic) : null,
+      author ? fetchUserByUsername(author) : null
+    ])
+      .then(([topicRows, authorRows]) => {
+        console.log(topicRows, authorRows);
+        if (authorRows !== null && !authorRows) {
+          return Promise.reject({ code: 404, msg: 'Author does not exist' });
+        } else if (topicRows !== null && !topicRows) {
+          return Promise.reject({ code: 404, msg: 'Topic does not exist' });
+        } else return fetchAllArticles(req.query);
+      })
       .then(articles => {
         res.status(200).send({ articles });
       })
       .catch(next);
-  } else
-    Promise.all([fetchAllArticles(req.query), fetchUserByUsername(author)])
-      .then(([articles, author]) => {
-        if (!author)
-          return Promise.reject({ code: 404, msg: 'Author does not exist' });
-        else res.status(200).send({ articles });
-      })
-      .catch(next);
+  }
 };
+
+// const { author } = req.query;
+//   if (!author) {
+//     fetchAllArticles(req.query)
+//       .then(articles => {
+//         res.status(200).send({ articles });
+//       })
+//       .catch(next);
+//   } else
+//     Promise.all([fetchAllArticles(req.query), fetchUserByUsername(author)])
+//       .then(([articles, author]) => {
+//         if (!author)
+//           return Promise.reject({ code: 404, msg: 'Author does not exist' });
+//         else res.status(200).send({ articles });
+//       })
+//       .catch(next);
 
 const getArticleById = (req, res, next) => {
   const { article_id } = req.params;

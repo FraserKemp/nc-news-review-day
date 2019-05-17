@@ -38,7 +38,7 @@ describe.only('/', () => {
       });
     });
 
-    describe.only('/api/topics/:theTopic', () => {
+    describe('/api/topics/:theTopic', () => {
       it('GET status:200 - returns true if the topic exists', () => {
         return request(app)
           .get('/api/topics/paper')
@@ -352,6 +352,19 @@ describe.only('/', () => {
       });
     });
 
+    describe('/topics', () => {
+      describe('GET a topic that doesnt exist', () => {
+        it('returns status 404 - GET - when passed a topic that does not exist', () => {
+          return request(app)
+            .get('/api/topics/notATopic')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Topic does not exist');
+            });
+        });
+      });
+    });
+
     describe('/articles', () => {
       describe('Sorting a table by a key that doesnt exist', () => {
         it('returns status 404 - GET - Column does not exist when passed an invalid column', () => {
@@ -375,7 +388,7 @@ describe.only('/', () => {
         });
       });
 
-      describe('GET all articles by a author that doesnt exist', () => {
+      describe.only('GET all articles by a author that doesnt exist', () => {
         it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
           return request(app)
             .get('/api/articles?author=NotAnAuthor')
@@ -397,16 +410,16 @@ describe.only('/', () => {
         });
       });
 
-      // describe('GET all articles by a topic that doesnt exist', () => {
-      //   it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
-      //     return request(app)
-      //       .get('/api/articles?topic=NotATopc')
-      //       .expect(404)
-      //       .then(({ body }) => {
-      //         expect(body.msg).to.eql('Topic does not exist');
-      //       });
-      //   });
-      // });
+      describe.only('GET all articles by a topic that doesnt exist', () => {
+        it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
+          return request(app)
+            .get('/api/articles?topic=NotATopic')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Topic does not exist');
+            });
+        });
+      });
 
       describe('GET - Passsed an incorrect article_id to get the data from', () => {
         it('returns status:404 - GET - when an incorrect article_id is passed', () => {
