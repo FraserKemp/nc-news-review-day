@@ -17,7 +17,6 @@ const getAllArticles = (req, res, next) => {
   if (!author && !topic) {
     fetchAllArticles(req.query)
       .then(articles => {
-        console.log('hello');
         res.status(200).send({ articles });
       })
       .catch(next);
@@ -27,7 +26,6 @@ const getAllArticles = (req, res, next) => {
       author ? fetchUserByUsername(author) : null
     ])
       .then(([topicRows, authorRows]) => {
-        console.log(topicRows, authorRows);
         if (authorRows !== null && !authorRows) {
           return Promise.reject({ code: 404, msg: 'Author does not exist' });
         } else if (topicRows !== null && !topicRows) {
@@ -40,22 +38,6 @@ const getAllArticles = (req, res, next) => {
       .catch(next);
   }
 };
-
-// const { author } = req.query;
-//   if (!author) {
-//     fetchAllArticles(req.query)
-//       .then(articles => {
-//         res.status(200).send({ articles });
-//       })
-//       .catch(next);
-//   } else
-//     Promise.all([fetchAllArticles(req.query), fetchUserByUsername(author)])
-//       .then(([articles, author]) => {
-//         if (!author)
-//           return Promise.reject({ code: 404, msg: 'Author does not exist' });
-//         else res.status(200).send({ articles });
-//       })
-//       .catch(next);
 
 const getArticleById = (req, res, next) => {
   const { article_id } = req.params;

@@ -165,7 +165,7 @@ describe.only('/', () => {
           })
           .expect(200)
           .then(({ body }) => {
-            expect(body.article[0]).to.contain.keys(
+            expect(body.article).to.contain.keys(
               'article_id',
               'title',
               'body',
@@ -221,7 +221,7 @@ describe.only('/', () => {
           })
           .expect(201)
           .then(({ body }) => {
-            expect(body.comment[0]).to.contain.keys(
+            expect(body.comment).to.contain.keys(
               'article_id',
               'author',
               'body',
@@ -388,7 +388,7 @@ describe.only('/', () => {
         });
       });
 
-      describe.only('GET all articles by a author that doesnt exist', () => {
+      describe('GET all articles by a author that doesnt exist', () => {
         it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
           return request(app)
             .get('/api/articles?author=NotAnAuthor')
@@ -410,7 +410,7 @@ describe.only('/', () => {
         });
       });
 
-      describe.only('GET all articles by a topic that doesnt exist', () => {
+      describe('GET all articles by a topic that doesnt exist', () => {
         it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
           return request(app)
             .get('/api/articles?topic=NotATopic')
@@ -552,6 +552,18 @@ describe.only('/', () => {
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).to.eql('Incorrect comment format');
+            });
+        });
+      });
+
+      describe.only('POST - Passed a correct article_id but not passed a full comment', () => {
+        it('returns status:400 - POST - when passed a correct article_id but not a full comment', () => {
+          return request(app)
+            .post('/api/articles/1/comments')
+            .send({ body: 'help me my username has gone' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('No Username or Body given');
             });
         });
       });

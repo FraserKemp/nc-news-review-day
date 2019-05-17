@@ -56,8 +56,8 @@ const updateArticleById = (article_id, inc_votes) => {
       .where({ article_id })
       .increment('votes', inc_votes)
       .returning('*')
-      .then(article => {
-        if (article.length === 0) return Promise.reject({ code: 404 });
+      .then(([article]) => {
+        if (!article) return Promise.reject({ code: 404 });
         else return article;
       });
 };
@@ -83,10 +83,16 @@ const fetchCommentsByArticleId = (
 };
 
 const addNewComment = newComment => {
-  return connection
-    .into('comments')
-    .insert(newComment)
-    .returning('*');
+  if (!newComment.author || !newComment.body)
+    return Promise.reject({ code: 400, msg: 'No Username or Body given' });
+  else
+    return connection
+      .into('comments')
+      .insert(newComment)
+      .returning('*')
+      .then(([comment]) => {
+        return comment;
+      });
 };
 module.exports = {
   fetchAllArticles,
