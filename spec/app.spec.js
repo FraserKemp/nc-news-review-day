@@ -283,14 +283,14 @@ describe.only('/', () => {
       });
     });
 
-    describe('/api/comments/:comment_id', () => {
+    describe.only('/api/comments/:comment_id', () => {
       it('PATCH status:200 - returns the comment that has been patched', () => {
         return request(app)
           .patch('/api/comments/1')
           .send({})
           .expect(200)
           .then(({ body }) => {
-            expect(body.comment.votes).to.eql(17);
+            expect(body.comment.votes).to.eql(16);
           });
       });
     });
