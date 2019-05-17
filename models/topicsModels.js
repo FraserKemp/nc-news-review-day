@@ -9,4 +9,15 @@ const fetchAllTopics = () => {
     });
 };
 
-module.exports = { fetchAllTopics };
+const fetchTopicByName = theTopic => {
+  return connection
+    .select('*')
+    .from('topics')
+    .where('slug', theTopic)
+    .first()
+    .then(topic => {
+      return topic;
+    });
+};
+
+module.exports = { fetchAllTopics, fetchTopicByName };

@@ -25,15 +25,28 @@ describe.only('/', () => {
     });
   });
 
-  describe('/api/topics', () => {
-    it('GET status:200 - returns all topics', () => {
-      return request(app)
-        .get('/api/topics')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.topics[0]).to.contain.keys('slug', 'description');
-          expect(body.topics).to.have.lengthOf(3);
-        });
+  describe('/topics', () => {
+    describe('/api/topics', () => {
+      it('GET status:200 - returns all topics', () => {
+        return request(app)
+          .get('/api/topics')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.topics[0]).to.contain.keys('slug', 'description');
+            expect(body.topics).to.have.lengthOf(3);
+          });
+      });
+    });
+
+    describe.only('/api/topics/:theTopic', () => {
+      it('GET status:200 - returns true if the topic exists', () => {
+        return request(app)
+          .get('/api/topics/paper')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.topic).to.contain.keys('slug', 'description');
+          });
+      });
     });
   });
 
@@ -281,6 +294,14 @@ describe.only('/', () => {
               expect(body.msg).to.eql('Method Not Allowed');
             });
         });
+        it('returns status:405 - when passed a method that isnt set up on the route "/api/topics"', () => {
+          return request(app)
+            .put('/api/topics/mitch')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Method Not Allowed');
+            });
+        });
       });
       describe('articlesRouter', () => {
         it('returns status:405 - when passed a method that isnt set up on the route "/api/articles"', () => {
@@ -376,16 +397,16 @@ describe.only('/', () => {
         });
       });
 
-      describe('GET all articles by a topic that doesnt exist', () => {
-        it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
-          return request(app)
-            .get('/api/articles?topic=NotATopc')
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).to.eql('Topic does not exist');
-            });
-        });
-      });
+      // describe('GET all articles by a topic that doesnt exist', () => {
+      //   it('returns status 404 - GET - author does not exist when passed an invalid author', () => {
+      //     return request(app)
+      //       .get('/api/articles?topic=NotATopc')
+      //       .expect(404)
+      //       .then(({ body }) => {
+      //         expect(body.msg).to.eql('Topic does not exist');
+      //       });
+      //   });
+      // });
 
       describe('GET - Passsed an incorrect article_id to get the data from', () => {
         it('returns status:404 - GET - when an incorrect article_id is passed', () => {
