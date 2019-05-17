@@ -20,7 +20,12 @@ describe.only('/', () => {
         .get('/api')
         .expect(200)
         .then(({ body }) => {
-          expect(body.ok).to.equal(true);
+          expect(body.endpoints).to.contain.keys(
+            'topics',
+            'articles',
+            'comments',
+            'users'
+          );
         });
     });
   });
