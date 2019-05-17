@@ -174,6 +174,24 @@ describe.only('/', () => {
               'author',
               'created_at'
             );
+            expect(body.article.votes).to.eql(101);
+          });
+      });
+      it('PATCH status:200 - returns the article when nothing is passed to patch', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article).to.contain.keys(
+              'article_id',
+              'title',
+              'body',
+              'votes',
+              'topic',
+              'author',
+              'created_at'
+            );
+            expect(body.article.votes).to.eql(100);
           });
       });
     });
@@ -185,6 +203,18 @@ describe.only('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments).to.have.lengthOf(13);
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments', () => {
+      it('GET status:200 - returns an empty array when an article has no comments', () => {
+        return request(app)
+          .get('/api/articles/2/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.have.lengthOf(0);
+            expect(body.comments).to.eql([]);
           });
       });
     });
@@ -239,10 +269,22 @@ describe.only('/', () => {
       it('PATCH status:200 - returns the comment that has been patched', () => {
         return request(app)
           .patch('/api/comments/1')
-          .send({ inc_votes: -1 })
+          .send({ inc_votes: 1 })
           .expect(200)
           .then(({ body }) => {
-            expect(body.comment[0].votes).to.eql(15);
+            expect(body.comment.votes).to.eql(17);
+          });
+      });
+    });
+
+    describe('/api/comments/:comment_id', () => {
+      it('PATCH status:200 - returns the comment that has been patched', () => {
+        return request(app)
+          .patch('/api/comments/1')
+          .send({})
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comment.votes).to.eql(17);
           });
       });
     });
@@ -370,7 +412,7 @@ describe.only('/', () => {
         it('returns status 404 - GET - Column does not exist when passed an invalid column', () => {
           return request(app)
             .get('/api/articles?sort_by=christymastime')
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
               expect(body.msg).to.eql('Column does not exist');
             });
@@ -448,17 +490,6 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Id does not exist');
-            });
-        });
-      });
-
-      describe('PATCH - Passsed an nothing to patch', () => {
-        it('returns status:404 - PATCH - when an correct article_id is passed with nothing to patch', () => {
-          return request(app)
-            .patch('/api/articles/1')
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).to.eql('Bad Request! Body is not a number');
             });
         });
       });
@@ -556,14 +587,14 @@ describe.only('/', () => {
         });
       });
 
-      describe.only('POST - Passed a correct article_id but not passed a full comment', () => {
+      describe('POST - Passed a correct article_id but not passed a full comment', () => {
         it('returns status:400 - POST - when passed a correct article_id but not a full comment', () => {
           return request(app)
             .post('/api/articles/1/comments')
             .send({ body: 'help me my username has gone' })
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).to.eql('No Username or Body given');
+              expect(body.msg).to.eql('Incorrect comment format');
             });
         });
       });
@@ -582,17 +613,6 @@ describe.only('/', () => {
         });
       });
 
-      describe('PATCH - Passed an incorrect comment_id and nothing to patch', () => {
-        it('returns status:400 - PATCH - when passed an incorrect comment_id and nothing to patch', () => {
-          return request(app)
-            .patch('/api/comments/9999')
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).to.eql('Nothing sent to PATCH');
-            });
-        });
-      });
-
       describe('PATCH - Passed an invalid comment_id', () => {
         it('returns status:400 - PATCH - when passed an incorrect comment_id', () => {
           return request(app)
@@ -601,17 +621,6 @@ describe.only('/', () => {
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).to.eql('Invalid input syntax for interger');
-            });
-        });
-      });
-
-      describe('PATCH - Passsed a valid comment_id with nothing to patch', () => {
-        it('returns status:400 - PATCH - when a valid comment_id is given with nothing to send', () => {
-          return request(app)
-            .patch('/api/comments/1')
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).to.eql('Nothing sent to PATCH');
             });
         });
       });

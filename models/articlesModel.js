@@ -44,13 +44,8 @@ const fetchArticleById = article_id => {
     });
 };
 
-const updateArticleById = (article_id, inc_votes) => {
-  if (!inc_votes || typeof inc_votes !== 'number')
-    return Promise.reject({
-      code: 400,
-      msg: 'Bad Request! Body is not a number'
-    });
-  else
+const updateArticleById = (article_id, inc_votes = 0) => {
+  if (typeof inc_votes === 'number' || !inc_votes) {
     return connection
       .into('articles')
       .where({ article_id })
@@ -60,13 +55,18 @@ const updateArticleById = (article_id, inc_votes) => {
         if (!article) return Promise.reject({ code: 404 });
         else return article;
       });
+  } else
+    return Promise.reject({
+      code: 400,
+      msg: 'Bad Request! Body is not a number'
+    });
 };
 
-const fetchCommentsByArticleId = (
+const fetchCommentsByArticleId = ({
   article_id,
   sort_by = 'created_at',
   order = 'desc'
-) => {
+}) => {
   if (!article_id)
     return Promise.reject({ code: 400, msg: 'article_id must be a number' });
   else
@@ -77,14 +77,14 @@ const fetchCommentsByArticleId = (
       .orderBy(sort_by, order)
       .returning('*')
       .then(comment => {
-        if (comment.length === 0) return Promise.reject({ code: 404 });
+        if (!comment) return Promise.reject({ code: 404 });
         else return comment;
       });
 };
 
 const addNewComment = newComment => {
   if (!newComment.author || !newComment.body)
-    return Promise.reject({ code: 400, msg: 'No Username or Body given' });
+    return Promise.reject({ code: 400, msg: 'Incorrect comment format' });
   else
     return connection
       .into('comments')

@@ -18,7 +18,8 @@ exports.sqlErrors = (err, req, res, next) => {
 exports.handle400 = (err, req, res, next) => {
   const codes = {
     '23502': 'Incorrect comment format',
-    400: 'Bad request!'
+    400: 'Bad request!',
+    42703: 'Column does not exist'
   };
   if (codes[err.code]) {
     res.status(400).send({ msg: err.msg || codes[err.code] });
@@ -28,8 +29,7 @@ exports.handle400 = (err, req, res, next) => {
 exports.handle404 = (err, req, res, next) => {
   const codes = {
     '23503': 'Id does not exist',
-    404: 'Id does not exist',
-    42703: 'Column does not exist'
+    404: 'Id does not exist'
   };
   if (codes[err.code]) {
     res.status(404).send({ msg: err.msg || codes[err.code] });

@@ -61,7 +61,12 @@ const patchArticleById = (req, res, next) => {
 const getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
-  fetchCommentsByArticleId(article_id, sort_by, order)
+  const params = { article_id, sort_by, order };
+  fetchArticleById(article_id)
+    .then(article => {
+      if (!article) return Promise.reject({ code: 404 });
+      else return fetchCommentsByArticleId(params);
+    })
     .then(comments => {
       res.status(200).send({ comments });
     })
