@@ -150,7 +150,8 @@ describe.only('/', () => {
               'votes',
               'topic',
               'author',
-              'created_at'
+              'created_at',
+              'comment_count'
             );
           });
       });
