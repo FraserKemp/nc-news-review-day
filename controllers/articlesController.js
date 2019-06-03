@@ -3,7 +3,8 @@ const {
   fetchArticleById,
   updateArticleById,
   fetchCommentsByArticleId,
-  addNewComment
+  addNewComment,
+  countOfArticles
 } = require('../models/articlesModel');
 
 const { fetchUserByUsername } = require('../models/usersModel');
@@ -15,9 +16,10 @@ const getAllArticles = (req, res, next) => {
   const { topic } = req.query;
 
   if (!author && !topic) {
-    fetchAllArticles(req.query)
-      .then(articles => {
-        res.status(200).send({ articles });
+    return Promise.all([fetchAllArticles(req.query), countOfArticles()])
+      .then(([articles, count]) => {
+        const total_count = count.count;
+        res.status(200).send({ total_count, articles });
       })
       .catch(next);
   } else {
@@ -33,7 +35,11 @@ const getAllArticles = (req, res, next) => {
         } else return fetchAllArticles(req.query);
       })
       .then(articles => {
-        res.status(200).send({ articles });
+        return Promise.all([articles, countOfArticles()]);
+      })
+      .then(([articles, count]) => {
+        const total_count = count.count;
+        res.status(200).send({ total_count, articles });
       })
       .catch(next);
   }
@@ -60,8 +66,8 @@ const patchArticleById = (req, res, next) => {
 
 const getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  const { sort_by, order } = req.query;
-  const params = { article_id, sort_by, order };
+  const { sort_by, order, p } = req.query;
+  const params = { article_id, sort_by, order, p };
   fetchArticleById(article_id)
     .then(article => {
       if (!article) return Promise.reject({ code: 404 });

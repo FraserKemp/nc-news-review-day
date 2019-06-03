@@ -4,7 +4,9 @@ const fetchAllArticles = ({
   sort_by = 'created_at',
   order = 'desc',
   author,
-  topic
+  topic,
+  limit = 10,
+  p = 1
 }) => {
   if (order !== 'asc' && order !== 'desc' && order !== undefined) {
     return Promise.reject({ code: 400 });
@@ -20,6 +22,8 @@ const fetchAllArticles = ({
       )
       .count('comments.article_id as comment_count')
       .from('articles')
+      .limit(limit)
+      .offset((p - 1) * limit)
       .modify(query => {
         if (author) query.where('articles.author', author);
         if (topic) query.where('articles.topic', topic);
@@ -28,8 +32,17 @@ const fetchAllArticles = ({
       .groupBy('articles.article_id')
       .orderBy(sort_by, order)
       .then(articles => {
-        if (articles) return articles;
+        return articles;
       });
+};
+
+const countOfArticles = () => {
+  return connection('articles')
+    .count()
+    .first()
+    .then(count => {
+      return count;
+    });
 };
 
 const fetchArticleById = article_id => {
@@ -76,7 +89,9 @@ const updateArticleById = (article_id, inc_votes = 0) => {
 const fetchCommentsByArticleId = ({
   article_id,
   sort_by = 'created_at',
-  order = 'desc'
+  order = 'desc',
+  limit = 10,
+  p = 1
 }) => {
   if (!article_id)
     return Promise.reject({ code: 400, msg: 'article_id must be a number' });
@@ -84,6 +99,8 @@ const fetchCommentsByArticleId = ({
     return connection
       .select('*')
       .from('comments')
+      .limit(limit)
+      .offset((p - 1) * limit)
       .where({ article_id })
       .orderBy(sort_by, order)
       .returning('*')
@@ -105,10 +122,12 @@ const addNewComment = newComment => {
         return comment;
       });
 };
+
 module.exports = {
   fetchAllArticles,
   fetchArticleById,
   updateArticleById,
   fetchCommentsByArticleId,
-  addNewComment
+  addNewComment,
+  countOfArticles
 };

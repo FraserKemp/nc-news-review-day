@@ -22,4 +22,15 @@ const fetchTopicByName = theTopic => {
     });
 };
 
-module.exports = { fetchAllTopics, fetchTopicByName };
+const insertNewTopic = newTopic => {
+  if (!newTopic) return Promise.reject({ code: 400, msg: 'Incorrect Format' });
+  return connection
+    .into('topics')
+    .insert(newTopic)
+    .returning('*')
+    .then(([topic]) => {
+      return topic;
+    });
+};
+
+module.exports = { fetchAllTopics, fetchTopicByName, insertNewTopic };

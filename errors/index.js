@@ -8,7 +8,8 @@ exports.methodNotAllowed = (req, res, next) => {
 
 exports.sqlErrors = (err, req, res, next) => {
   const codes = {
-    '22P02': 'Invalid input syntax for interger'
+    '22P02': 'Invalid input syntax for interger',
+    '42703': 'Column does not exist'
   };
   if (codes[err.code]) {
     res.status(400).send({ msg: codes[err.code] });
@@ -17,7 +18,7 @@ exports.sqlErrors = (err, req, res, next) => {
 
 exports.handle400 = (err, req, res, next) => {
   const codes = {
-    '23502': 'Incorrect comment format',
+    '23502': 'Incorrect Format',
     400: 'Bad request!',
     42703: 'Column does not exist'
   };

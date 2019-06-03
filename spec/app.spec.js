@@ -53,6 +53,17 @@ describe.only('/', () => {
           });
       });
     });
+    describe('/api/topics', () => {
+      it('POST status:200 - returns the new topic that is to be posted', () => {
+        return request(app)
+          .post('/api/topics')
+          .send({ description: 'hello topic', slug: 'apples' })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.topic).to.contain.keys('description', 'slug');
+          });
+      });
+    });
   });
 
   describe('/articles', () => {
@@ -80,6 +91,39 @@ describe.only('/', () => {
               'created_at',
               'comment_count'
             );
+          });
+      });
+    });
+
+    describe('/articles', () => {
+      it('GET status:200 - returns only 10 articles', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.have.lengthOf(10);
+          });
+      });
+    });
+
+    describe('/articles', () => {
+      it('GET status:200 - returns the amount of articles on the second page', () => {
+        return request(app)
+          .get('/api/articles?p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles).to.have.lengthOf(2);
+          });
+      });
+    });
+
+    describe('/articles', () => {
+      it('GET - returns status:200 - returns all the articles as a key of total_count', () => {
+        return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).to.contain.keys('articles', 'total_count');
           });
       });
     });
@@ -124,6 +168,7 @@ describe.only('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles).to.have.lengthOf(3);
+            expect(body).to.contain.keys('articles', 'total_count');
           });
       });
     });
@@ -134,10 +179,11 @@ describe.only('/', () => {
           .get('/api/articles?topic=mitch')
           .expect(200)
           .then(({ body }) => {
-            expect(body.articles).to.have.lengthOf(11);
+            expect(body.articles).to.have.lengthOf(10); // mitch has 11 articles but the limit is 10 so only 10 will be shown
             expect(body.articles[0].topic).to.eql('mitch');
             expect(body.articles[4].topic).to.eql('mitch');
             expect(body.articles[8].topic).to.eql('mitch');
+            expect(body).to.contain.keys('articles', 'total_count');
           });
       });
     });
@@ -208,7 +254,7 @@ describe.only('/', () => {
           .get('/api/articles/1/comments')
           .expect(200)
           .then(({ body }) => {
-            expect(body.comments).to.have.lengthOf(13);
+            expect(body.comments).to.have.lengthOf(10);
           });
       });
     });
@@ -221,6 +267,28 @@ describe.only('/', () => {
           .then(({ body }) => {
             expect(body.comments).to.have.lengthOf(0);
             expect(body.comments).to.eql([]);
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments', () => {
+      it('GET status:200 - returns 10 comments by the default limit of 10', () => {
+        return request(app)
+          .get('/api/articles/1/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.have.lengthOf(10);
+          });
+      });
+    });
+
+    describe('/api/articles/:article_id/comments', () => {
+      it('GET status:200 - Takes a query of p (page) which will get the next ', () => {
+        return request(app)
+          .get('/api/articles/1/comments?p=2')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.have.lengthOf(3);
           });
       });
     });
@@ -283,7 +351,7 @@ describe.only('/', () => {
       });
     });
 
-    describe.only('/api/comments/:comment_id', () => {
+    describe('/api/comments/:comment_id', () => {
       it('PATCH status:200 - returns the comment that has been patched', () => {
         return request(app)
           .patch('/api/comments/1')
@@ -296,7 +364,7 @@ describe.only('/', () => {
     });
 
     describe('/api/comments/:comment_id', () => {
-      it('DELETE status:200 - returns the comment that has been patched', () => {
+      it('DELETE status:200 - returns an empty object as it has been deleted', () => {
         return request(app)
           .delete('/api/comments/1')
           .expect(204)
@@ -315,6 +383,27 @@ describe.only('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.user).to.contain.keys('username', 'avatar_url', 'name');
+          });
+      });
+    });
+    describe('/api/users', () => {
+      it('GET status:200 = returns an object containing all the users', () => {
+        return request(app)
+          .get('/api/users')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.users).to.have.lengthOf(4);
+          });
+      });
+    });
+    describe('/api/users', () => {
+      it('POST status:200 - return the newly posted user', () => {
+        return request(app)
+          .post('/api/users')
+          .send({ username: 'Mel', name: 'Fraser', avatar_url: 'bananas' })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.user).to.contain.keys('username', 'name', 'avatar_url');
           });
       });
     });
@@ -411,6 +500,27 @@ describe.only('/', () => {
             });
         });
       });
+      describe('POST no topic given to POST', () => {
+        it('returns status 400 - POST - when passed no body', () => {
+          return request(app)
+            .post('/api/topics')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect Format');
+            });
+        });
+      });
+      describe('POST topic is given but incorrect values', () => {
+        it('return status 400 - POST - when passed incorrect values', () => {
+          return request(app)
+            .post('/api/topics')
+            .send({ description: 'hello', slug: null })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect Format');
+            });
+        });
+      });
     });
 
     describe('/articles', () => {
@@ -420,6 +530,7 @@ describe.only('/', () => {
             .get('/api/articles?sort_by=christymastime')
             .expect(400)
             .then(({ body }) => {
+              console.log(body);
               expect(body.msg).to.eql('Column does not exist');
             });
         });
@@ -662,6 +773,27 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.eql('Username does not exist');
+            });
+        });
+      });
+      describe('POST - passed an nothing to post', () => {
+        it('returns status 400 - POST - when passed no body to send', () => {
+          return request(app)
+            .post('/api/users')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect Format');
+            });
+        });
+      });
+      describe('POST - passed incorrect values in the body', () => {
+        it('returns status 400 - POST - when passed incorrect values', () => {
+          return request(app)
+            .post('/api/users')
+            .send({ username: 'butter_bridge', name: null, article_url: null })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Column does not exist');
             });
         });
       });
