@@ -6,6 +6,9 @@ const getAllEndpoints = (req, res, next) => {
           '/api/topics': 'returns all the topics',
           '/api/topics/:topicName':
             'returns the topic info, by given topic name'
+        },
+        POST: {
+          '/api/topics': 'returns the newly POSTED topic'
         }
       },
       articles: {
@@ -36,7 +39,11 @@ const getAllEndpoints = (req, res, next) => {
         }
       },
       users: {
-        '/api/users/:username': 'returns the user by the username given'
+        POST: { '/api/users': 'returns the newly POSTED user' },
+        GET: {
+          '/api/users/:username': 'returns the user by the username given',
+          '/api/users': 'returns all users'
+        }
       }
     }
   });
