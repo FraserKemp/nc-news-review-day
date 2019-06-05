@@ -123,11 +123,26 @@ const addNewComment = newComment => {
       });
 };
 
+const addNewArticle = newArticle => {
+  const { title, body, topic, author } = newArticle;
+  if (!newArticle || !title || !body || !topic || !author)
+    return Promise.reject({ code: 400, msg: 'Incorrect article format' });
+  else
+    return connection
+      .into('articles')
+      .insert(newArticle)
+      .returning('*')
+      .then(([article]) => {
+        return article;
+      });
+};
+
 module.exports = {
   fetchAllArticles,
   fetchArticleById,
   updateArticleById,
   fetchCommentsByArticleId,
   addNewComment,
-  countOfArticles
+  countOfArticles,
+  addNewArticle
 };

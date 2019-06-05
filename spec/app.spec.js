@@ -107,6 +107,31 @@ describe.only('/', () => {
     });
 
     describe('/articles', () => {
+      it('POST status:200 - returns newly posted article', () => {
+        return request(app)
+          .post('/api/articles')
+          .send({
+            title: 'WOWZA',
+            body: 'da best article ever',
+            topic: 'cats',
+            username: 'lurker'
+          })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.article).to.contain.keys(
+              'title',
+              'body',
+              'topic',
+              'article_id',
+              'author',
+              'created_at',
+              'votes'
+            );
+          });
+      });
+    });
+
+    describe('/articles', () => {
       it('GET status:200 - returns the amount of articles on the second page', () => {
         return request(app)
           .get('/api/articles?p=2')
@@ -530,8 +555,51 @@ describe.only('/', () => {
             .get('/api/articles?sort_by=christymastime')
             .expect(400)
             .then(({ body }) => {
-              console.log(body);
               expect(body.msg).to.eql('Column does not exist');
+            });
+        });
+      });
+
+      describe('posting a new Article with an incorrect format being sent', () => {
+        it('returns status: 400 - POST - Incorrect Aricle Format', () => {
+          return request(app)
+            .post('/api/articles')
+            .send({
+              title: 'hello',
+              body: 'hi there',
+              username: null,
+              topic: null
+            })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect article format');
+            });
+        });
+      });
+
+      describe('posting a new Article with a part of the body missing', () => {
+        it('returns status: 400 - POST - Incorrect Aricle Format', () => {
+          return request(app)
+            .post('/api/articles')
+            .send({
+              title: 'hello',
+              body: 'hi there',
+              topic: null
+            })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect article format');
+            });
+        });
+      });
+
+      describe('posting a new Article with no body to send', () => {
+        it('returns status: 400 - POST - Incorrect aricle aormat', () => {
+          return request(app)
+            .post('/api/articles')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.eql('Incorrect article format');
             });
         });
       });

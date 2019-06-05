@@ -4,7 +4,8 @@ const {
   updateArticleById,
   fetchCommentsByArticleId,
   addNewComment,
-  countOfArticles
+  countOfArticles,
+  addNewArticle
 } = require('../models/articlesModel');
 
 const { fetchUserByUsername } = require('../models/usersModel');
@@ -90,10 +91,21 @@ const postCommentByArticleId = (req, res, next) => {
     .catch(next);
 };
 
+const postNewArticle = (req, res, next) => {
+  const { title, body, topic, username } = req.body;
+  const newArticle = { title, body, topic, author: username };
+  addNewArticle(newArticle)
+    .then(article => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getAllArticles,
   getArticleById,
   patchArticleById,
   getCommentsByArticleId,
-  postCommentByArticleId
+  postCommentByArticleId,
+  postNewArticle
 };
