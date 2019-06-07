@@ -9,7 +9,8 @@ exports.methodNotAllowed = (req, res, next) => {
 exports.sqlErrors = (err, req, res, next) => {
   const codes = {
     '22P02': 'Invalid input syntax for interger',
-    '42703': 'Column does not exist'
+    '42703': 'Column does not exist',
+    '22001': 'body value too long'
   };
   if (codes[err.code]) {
     res.status(400).send({ msg: codes[err.code] });
