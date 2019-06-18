@@ -1,12 +1,12 @@
-const connection = require('../db/connection');
+const connection = require("../db/connection");
 
 const fetchUserByUsername = username => {
   if (!username)
-    return Promise.reject({ code: 400, msg: 'No username was given' });
+    return Promise.reject({ code: 400, msg: "No username was given" });
   return connection
-    .select('*')
-    .from('users')
-    .where('users.username', '=', username)
+    .select("*")
+    .from("users")
+    .where("users.username", "=", username)
     .first()
     .then(user => {
       return user;
@@ -15,17 +15,17 @@ const fetchUserByUsername = username => {
 
 const fetchAllUsers = () => {
   return connection
-    .select('*')
-    .from('users')
-    .returning('*');
+    .select("*")
+    .from("users")
+    .returning("*");
 };
 
 const insertNewUser = newUser => {
-  if (!newUser) return Promise.reject({ code: 400, msg: 'Incorrect Format' });
+  if (!newUser) return Promise.reject({ code: 400, msg: "Incorrect Format" });
   return connection
-    .into('users')
+    .into("users")
     .insert(newUser)
-    .returning('*')
+    .returning("*")
     .then(([user]) => {
       return user;
     });
